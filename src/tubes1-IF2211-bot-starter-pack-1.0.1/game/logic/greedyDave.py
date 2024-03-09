@@ -168,7 +168,7 @@ class GreedyDave(BaseLogic):
         if(times > 5 and times < 10 and (current_bot.properties.inventory_size - inventory) >= nearest_diamond.properties.points):
             return 1, nearest_diamond.position
         # If the times reach under 5 and there exist a diamond in inventory then just go back to base
-        elif(times <= 5 and inventory >= 1):
+        elif(times <= 5 and inventory >= 3):
             return 1, current_bot.properties.base
         
 
@@ -180,7 +180,7 @@ class GreedyDave(BaseLogic):
         t = times_score * timeWeight
         e = nearest_enemy_score * enemyWeight
         nd = nearest_diamond_score * nearestDiamWeight
-        total_score = inventoryWeight + baseWeight + timeWeight + enemyWeight + nearest_diamond_score
+        total_score = inventoryWeight + baseWeight + timeWeight + nearest_diamond_score
 
         result = (c + b + t + nd - e) / total_score
 
@@ -206,7 +206,7 @@ class GreedyDave(BaseLogic):
     def calculateNearestDiamond(self, current_bot : GameObject, board: Board, inventoryWeight, timeWeight, baseWeight, distanceWeight, pointWeight):
         
         # Consideration
-        inventory = current_bot.properties.inventory_size
+        inventory = current_bot.properties.diamonds
         time = current_bot.properties.milliseconds_left / 1000
         
         # The lesser the inventory left, is is better to just get the nearest diamond
@@ -226,12 +226,15 @@ class GreedyDave(BaseLogic):
         
         # The shorter the time left, it is better to get the nearest diamond
         time_score = time/ self.current_time
-        time_score = 1 - time
+
         
+        time_score = 1 - time_score
+
         if((current_bot.properties.inventory_size - inventory) < point):
             return 0, diam_obj.position
 
         c = inventory_score * inventoryWeight
+        
         t = time_score * timeWeight
         b = self.base_distance * baseWeight
         d = distance * distanceWeight
@@ -284,12 +287,11 @@ class GreedyDave(BaseLogic):
         p = point_score * pointWeight
         b = base_score * baseWeight
         e = enemy_score * enemyWeight
-        total_score = distanceWeight + pointWeight + baseWeight + enemyWeight
+        total_score = distanceWeight + pointWeight + baseWeight
 
         result = (d + p + b - e) / total_score
         return result, self.telA.position
         
-
     def calculateTakeRedButton(self, bot : GameObject, board: Board, inventoryWeight, amountWeight, scoreWeight, distanceWeight, enemyWeight):
         # Consideration
         user_inventory = bot.properties.diamonds
@@ -331,7 +333,7 @@ class GreedyDave(BaseLogic):
         s = scores_ratio * scoreWeight
         d = distance_score * distanceWeight
         e = enemy_score * enemyWeight
-        total_Score = inventoryWeight + amountWeight + scoreWeight + distanceWeight + enemyWeight
+        total_Score = inventoryWeight + amountWeight + scoreWeight + distanceWeight
 
         result = (c + a + s + d - e) / total_Score
         return result, self.redButton.position
@@ -370,38 +372,40 @@ class GreedyDave(BaseLogic):
         positions = []
 
         # Nearest Diamond
-        point, pos = self.calculateNearestDiamond(bot,board,inventoryWeight=3,timeWeight=2,baseWeight=1,distanceWeight=3,pointWeight=1)
+        point, pos = self.calculateNearestDiamond(bot,board,inventoryWeight=3,timeWeight=1,baseWeight=2,distanceWeight=3,pointWeight=3)
         
         points.append(point); positions.append(pos)
 
         # Blue Diamond
-        point, pos = self.calculateOtherDiamond(bot, board, inventoryWeight=3,distanceWeight=3,timeWeight=2,baseWeight=3,enemyWeight=2,isBlueDiamond=True)
+        point, pos = self.calculateOtherDiamond(bot, board, inventoryWeight=2,distanceWeight=3,timeWeight=2,baseWeight=2,enemyWeight=2,isBlueDiamond=True)
 
         points.append(point); positions.append(pos)
 
         # Red Diamond
-        point, pos = self.calculateOtherDiamond(bot,board,inventoryWeight=3,distanceWeight=4,timeWeight=2, baseWeight=2,enemyWeight=2, isBlueDiamond=False)
+        point, pos = self.calculateOtherDiamond(bot,board,inventoryWeight=2,distanceWeight=4,timeWeight=2, baseWeight=2,enemyWeight=2, isBlueDiamond=False)
         
         points.append(point); positions.append(pos)
 
         # Base
-        point, pos = self.calculateGoesToBase(bot,board, inventoryWeight=3,timeWeight=1,baseWeight=2,enemyWeight=2,nearestDiamWeight=2)
+        point, pos = self.calculateGoesToBase(bot,board, inventoryWeight=3,timeWeight=2,baseWeight=3,enemyWeight=2,nearestDiamWeight=1)
         
         points.append(point); positions.append(pos)
         
         # Portal
-        point, pos = self.calculateTakePortal(bot,board,distanceWeight=4,pointWeight=2,baseWeight=4,enemyWeight=2)
+        point, pos = self.calculateTakePortal(bot,board,distanceWeight=4,pointWeight=2,baseWeight=2,enemyWeight=1)
 
         points.append(point); positions.append(pos)
         
         # Red Button
-        point,pos = self.calculateTakeRedButton(bot, board, inventoryWeight=2,amountWeight=4,scoreWeight=2,distanceWeight=2,enemyWeight=2)
+        point,pos = self.calculateTakeRedButton(bot, board, inventoryWeight=1,amountWeight=4,scoreWeight=3,distanceWeight=3,enemyWeight=1)
 
         points.append(point); positions.append(pos)
 
         highest_point = max(points)
         idx = points.index(highest_point)
         highest_pos = positions[idx]
+
+        print(points)
 
         # Hanlde Portal Error
         if(target_names[idx] == "Portals"):
@@ -419,12 +423,12 @@ class GreedyDave(BaseLogic):
             self.current_time = int(round(bot.properties.milliseconds_left / 1000))
             self.currentId = bot.id
             self.isDataSaved = True
-            print("Time: ", self.current_time)
 
         self.goal_position = self.nextGoal(bot,board)
 
         # Set movement
         if self.goal_position:
+            
             # We are aiming for a specific position, calculate delta
             delta_x, delta_y = get_direction(
                 bot.position.x,

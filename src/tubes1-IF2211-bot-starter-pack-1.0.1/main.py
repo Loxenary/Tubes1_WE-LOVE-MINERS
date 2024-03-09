@@ -8,20 +8,18 @@ from game.bot_handler import BotHandler
 from game.logic.random import RandomLogic
 from game.util import *
 from game.logic.base import BaseLogic
-from game.logic.greedy1 import Greedy1
-from game.logic.greedy2 import Greedy2
-from game.logic.greedy3 import Greedy3
-from game.logic.greedy4 import Greedy4
+from game.logic.greedyDave import GreedyDave
+from game.logic.greedyQais import Greedy4
+from game.logic.greedyJustin import Revelation
 
 init()
 BASE_URL = "http://localhost:3000/api"
 DEFAULT_BOARD_ID = 1
 CONTROLLERS = {
     "Random": RandomLogic,
-    "Greedy1": Greedy1,
-    "Greedy2": Greedy2,
-    "Greedy3": Greedy3,
-    "Greedy4": Greedy4
+    "GreedyQais": Greedy4,
+    "GreedyDave": GreedyDave,
+    "GreedyJustin": Revelation,
 }
 
 ###############################################################################
