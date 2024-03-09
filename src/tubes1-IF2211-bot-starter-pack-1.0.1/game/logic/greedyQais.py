@@ -113,7 +113,7 @@ class Greedy4(BaseLogic):
         if home_dist > 0 and bot.properties.diamonds > 0:
             home_points = (0.12 * bot.properties.diamonds) / home_dist
             seconds_left = bot.properties.milliseconds_left / 1000
-            if (home_points > max_points or bot.properties.diamonds == 5 or seconds_left < 8):
+            if (home_points > max_points or bot.properties.diamonds == bot.properties.inventory_size or seconds_left < 8):
                 goal_pos = self.telA.position if useTel else bot.properties.base
         
         print(f'Max points: {max_points}')
