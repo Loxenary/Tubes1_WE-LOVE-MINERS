@@ -12,7 +12,7 @@ Project ini ditujukan sebagai pemenuhan Tugas Besar 1 IF2211 Strategi Algoritma 
 
 ### Algorithm Greedy Implementation
 
-    Penggunaan algoritma greedy pada tugas ini berupa pencarian diamond oleh bot secara efektif dan pengkondisian bot sehingga dapat beradaptasi dengan objek-objek disekitarnya. Selain itu, bot juga harus memperhatikan beberapa aspek seperti diamond inventory dan waktu
+Penggunaan algoritma greedy pada tugas ini berupa pencarian diamond oleh bot secara efektif dan pengkondisian bot sehingga dapat beradaptasi dengan objek-objek disekitarnya. Selain itu, bot juga harus memperhatikan beberapa aspek seperti diamond inventory dan waktu
 
 ### How the algorithm works
 
